@@ -1,0 +1,46 @@
+# Set up environment
+import os
+from dotenv import load_dotenv
+
+# Load environment variables (API keys, etc.)
+load_dotenv()
+
+# Imports
+import speech_recognition as sr
+from transformers import pipeline
+
+# Initialize speech recognition
+r = sr.Recognizer()
+
+# Define assistant's name
+assistant_name = "Assistant"
+
+# Function to listen for user input
+def listen_for_input():
+    with sr.Microphone() as source:
+        print(f"{assistant_name}: Listening...")
+        audio = r.record(source)
+    try:
+        text = r.recognize_google(audio)
+        return text.lower()
+    except sr.UnknownValueError:
+        print("Could not understand audio")
+        return None
+
+# Function to process user input and respond
+def respond_to_input(text):
+    # Use NLP pipeline to understand and respond (replace with your chosen pipeline)
+    nlp = pipeline("question-answering")
+    answer = nlp(question=text, context="This is a large corpus of text")
+    return answer["answer"]
+
+# Main loop
+while True:
+    text = listen_for_input()
+    if text == "quit":
+        break
+    response = respond_to_input(text)
+    print(f"{assistant_name}: {response}")
+
+# Closing
+print(f"{assistant_name}: Goodbye!")
